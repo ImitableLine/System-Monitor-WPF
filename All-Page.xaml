@@ -94,19 +94,28 @@
                    Grid.RowSpan="20" Grid.ColumnSpan="23"
                    Fill="#FFADACAC"
                    Panel.ZIndex="-1"
-                   RadiusX="20" RadiusY="20"
-                   />
+                   RadiusX="20" RadiusY="20" Stroke="Black" StrokeThickness="2"
+                   >
+            <Rectangle.Effect>
+                <DropShadowEffect Color="Black" 
+                          BlurRadius="10" 
+                          ShadowDepth="5" 
+                          Opacity="0.5"/>
+                
+            </Rectangle.Effect>
+            
+        </Rectangle>
 
         <!-- CPU Section Background -->
-        <Rectangle Grid.Row="3" Grid.Column="2" Grid.RowSpan="18" Grid.ColumnSpan="5"
+        <Rectangle Grid.Row="3" Grid.Column="2" Grid.RowSpan="13" Grid.ColumnSpan="5"
                    Fill="#FF3A3A3A" RadiusX="10" RadiusY="10" Margin="5,10,5,10"/>
 
         <!-- Bandwidth Section Background -->
-        <Rectangle Grid.Row="3" Grid.Column="10" Grid.RowSpan="18" Grid.ColumnSpan="5"
+        <Rectangle Grid.Row="3" Grid.Column="10" Grid.RowSpan="13" Grid.ColumnSpan="5"
                    Fill="#FF3A3A3A" RadiusX="10" RadiusY="10" Margin="5,10,5,10"/>
 
         <!-- Memory Section Background -->
-        <Rectangle Grid.Row="3" Grid.Column="18" Grid.RowSpan="18" Grid.ColumnSpan="5"
+        <Rectangle Grid.Row="3" Grid.Column="18" Grid.RowSpan="13" Grid.ColumnSpan="5"
                    Fill="#FF3A3A3A" RadiusX="10" RadiusY="10" Margin="5,10,5,10"/>
 
 
@@ -210,5 +219,21 @@
             </ScrollViewer>
 
         </Border>
+        <Button x:Name="ExportButton"
+                Grid.Row="17" Grid.Column="11" Grid.ColumnSpan="3" Grid.RowSpan="2" Foreground="White" Click="ExportButton_Click" >
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border 
+                     
+                    BorderThickness="1" 
+                    CornerRadius="10" Background="#FF444343" BorderBrush="#FF060606">
+                        <ContentPresenter Content="Export Raw" HorizontalAlignment="Center" VerticalAlignment="Center" OpacityMask="White"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+
+
+
     </Grid>
 </Page>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -8,13 +9,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace Task_Scheduler
 {
@@ -25,6 +21,7 @@ namespace Task_Scheduler
     {
         public All_Page()
         {
+
             InitializeComponent();
 
 
@@ -55,6 +52,57 @@ namespace Task_Scheduler
 
 
 
+        public string ChooseAPath()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Text files (*.txt)|*.txt",
+                DefaultExt = ".txt",
+                FileName = "SystemDataLog"
+
+            };
+
+            // bool with "null" added as an option to true/false
+            bool? result = saveFileDialog.ShowDialog();
+            // if true, return savefiledialog.filename, if not, return null
+            return result == true ? saveFileDialog.FileName : null;
+        }
+
+
+
+        private List<string> logData = new List<string>(); // list to hold logged data
+
+        public void LogData(string data)
+        {
+            string logEntry = $"{DateTime.Now}: {data}";
+            logData.Add(logEntry);
+        }
+
+        public void ExportLogData()
+        {
+            string filePath = ChooseAPath();
+            if (filePath != null)
+            {
+                using (StreamWriter writer = new StreamWriter(filePath))
+                {
+                    foreach (string entry in logData)
+                    {
+                        writer.WriteLine(entry);
+                    }
+                }
+
+                MessageBox.Show("Log data exported successfully.");
+            }
+            else
+            {
+                MessageBox.Show("File save cancelled.");
+            }
+        }
+
+
+
+
+
 
 
 
@@ -75,6 +123,7 @@ namespace Task_Scheduler
             ConsoleTextBlock3.Text += text + "\n";
             ConsoleScrollViewer3.ScrollToEnd();
         }
+
 
         private void ConsoleScrollViewer_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -116,6 +165,7 @@ namespace Task_Scheduler
                 Console.WriteLine("CPU Usage: {0}% ||| CPU Idle: {1}% ||| CPU Interrupts/sec: {2}", cpuUsage, cpuIdle, cpuInterrupts);
                 string appendString = $"Usage: {cpuUsage}\nIdle: {cpuIdle}\nInterrupt: {cpuInterrupts}";
                 Dispatcher.Invoke(() => AppendToConsole_CPU(appendString));
+                Dispatcher.Invoke(() => LogData(appendString)); // for logging data
                 await Task.Run(() =>
                 {
 
@@ -148,7 +198,7 @@ namespace Task_Scheduler
                 Console.WriteLine("Available Memory: {0} MB || Committed Memory: {1} GB", availableMemory, committedMemoryGB);
                 string appendString = $"Avail: {availableMemory} Mb/s\nCommit: {committedMemoryGB} GB/s";
                 Dispatcher.Invoke(() => AppendToConsole_Memory(appendString));
-
+                Dispatcher.Invoke(() => LogData(appendString)); // for logging data
                 await Task.Run(() =>
                 {
 
@@ -212,6 +262,7 @@ namespace Task_Scheduler
                 //Console.WriteLine("Upload Speed: {0} Mb/s ||| Download Speed: {1} Mb/s", sendSpeed.ToString("0.00"), recSpeed.ToString("0.00"));
                 string appendString = $"Up: {sendSpeed:0.00} KB/s\nDown: {recSpeed:0.00} KB/s";
                 Dispatcher.Invoke(() => AppendToConsole_Bandwidth(appendString));
+                Dispatcher.Invoke(() => LogData(appendString)); // for logging data
                 oldBytesSent = newBytesSent;
                 oldBytesRec = newBytesRec;
                 startTime = DateTime.Now;
@@ -225,6 +276,11 @@ namespace Task_Scheduler
                 });
             }
 
+        }
+
+        private void ExportButton_Click(object sender, RoutedEventArgs e)
+        {
+            ExportLogData();
         }
     }
 }
